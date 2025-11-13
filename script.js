@@ -16,7 +16,7 @@ document.getElementById('convertBtn').addEventListener('click', async function (
 
   try {
     // Fetch live rates from exchangerate.host API
-    const url = `https://api.exchangerate.host/latest?base=${fromCurrency}&symbols=${toCurrency}`;
+    const url = `https://api.exchangerate.host/latest?base=${fromCurrency}&symbols=${toCurrency}&_=${Date.now()}`;
     const response = await fetch(url);
     const data = await response.json();
 
