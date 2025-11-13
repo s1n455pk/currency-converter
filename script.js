@@ -1,5 +1,3 @@
-// script.js
-
 document.getElementById('convertBtn').addEventListener('click', async function () {
   const amount = parseFloat(document.getElementById('amount').value);
   const fromCurrency = document.getElementById('fromCurrency').value;
@@ -14,10 +12,9 @@ document.getElementById('convertBtn').addEventListener('click', async function (
   resultDiv.innerText = "Fetching live rates... 💱";
 
   try {
-    // Live API from ExchangeRate-API
-    const apiUrl = `https://v6.exchangerate-api.com/v6/c23106cd745dea0438c54665/latest/${fromCurrency}`;
+    // ✅ Use CORS proxy for GitHub Pages
+    const apiUrl = `https://corsproxy.io/?https://v6.exchangerate-api.com/v6/c23106cd745dea0438c54665/latest/${fromCurrency}`;
     const res = await fetch(apiUrl);
-
     if (!res.ok) throw new Error("API request failed");
 
     const data = await res.json();
