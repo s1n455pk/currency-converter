@@ -15,19 +15,18 @@ document.getElementById('convertBtn').addEventListener('click', async function (
   result.innerText = 'Fetching latest exchange rates... 💱';
 
   try {
-    // Fetch live rates from exchangerate.host API
-    const url = `https://api.exchangerate.host/latest?base=${fromCurrency}&symbols=${toCurrency}&_=${Date.now()}`;
+    // ✅ Fixed API endpoint (always returns latest data)
+    const url = `https://api.exchangerate.host/convert?from=${fromCurrency}&to=${toCurrency}&amount=${amount}&_=${Date.now()}`;
     const response = await fetch(url);
     const data = await response.json();
 
-    if (!data.rates || !data.rates[toCurrency]) {
+    // ✅ Safe check for rate and result
+    if (!data.result) {
       result.innerText = '❌ Could not fetch rate. Try again later.';
       return;
     }
 
-    const rate = data.rates[toCurrency];
-    const convertedAmount = (amount * rate).toFixed(2);
-
+    const convertedAmount = data.result.toFixed(2);
     result.innerText = `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}`;
   } catch (error) {
     console.error('Error:', error);
