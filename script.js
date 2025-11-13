@@ -4,32 +4,33 @@ document.getElementById('convertBtn').addEventListener('click', async function (
   const amount = parseFloat(document.getElementById('amount').value);
   const fromCurrency = document.getElementById('fromCurrency').value;
   const toCurrency = document.getElementById('toCurrency').value;
-  const result = document.getElementById('result');
+  const resultDiv = document.getElementById('result');
 
   if (isNaN(amount) || amount <= 0) {
-    result.innerText = '⚠️ Please enter a valid amount.';
+    resultDiv.innerText = "⚠️ Please enter a valid amount.";
     return;
   }
 
-  // Show loading message
-  result.innerText = 'Fetching latest exchange rates... 💱';
+  resultDiv.innerText = "Fetching live rates... 💱";
 
   try {
-    // ✅ Fixed API endpoint (always returns latest data)
-    const url = `https://api.exchangerate.host/convert?from=${fromCurrency}&to=${toCurrency}&amount=${amount}&_=${Date.now()}`;
-    const response = await fetch(url);
-    const data = await response.json();
+    // Live API from ExchangeRate-API
+    const apiUrl = `https://v6.exchangerate-api.com/v6/c23106cd745dea0438c54665/latest/${fromCurrency}`;
+    const res = await fetch(apiUrl);
 
-    // ✅ Safe check for rate and result
-    if (!data.result) {
-      result.innerText = '❌ Could not fetch rate. Try again later.';
-      return;
+    if (!res.ok) throw new Error("API request failed");
+
+    const data = await res.json();
+
+    if (data && data.conversion_rates && data.conversion_rates[toCurrency]) {
+      const rate = data.conversion_rates[toCurrency];
+      const convertedAmount = (amount * rate).toFixed(2);
+      resultDiv.innerText = `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency} 💰`;
+    } else {
+      resultDiv.innerText = "❌ Could not fetch valid exchange rate.";
     }
-
-    const convertedAmount = data.result.toFixed(2);
-    result.innerText = `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}`;
-  } catch (error) {
-    console.error('Error:', error);
-    result.innerText = '🚫 Error fetching exchange rates. Please check your connection.';
+  } catch (err) {
+    console.error("Error:", err);
+    resultDiv.innerText = "🚫 Network or API error. Please try again.";
   }
 });
